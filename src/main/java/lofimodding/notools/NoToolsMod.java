@@ -17,6 +17,7 @@ import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -35,16 +36,21 @@ public class NoToolsMod {
     final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
     modBus.addListener(this::onConfigReload);
     modBus.addListener(this::gatherData);
+    modBus.addListener(this::clientSetup);
 
     final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
     forgeBus.addListener(this::onBreakSpeed);
     forgeBus.addListener(this::onUseHoe);
     forgeBus.addListener(this::onAttackEntity);
-    forgeBus.addListener(this::onTooltip);
   }
 
   public static ResourceLocation loc(final String path) {
     return new ResourceLocation(MOD_ID, path);
+  }
+
+  private void clientSetup(final FMLClientSetupEvent event) {
+    LOGGER.info("Loading client-only features...");
+    MinecraftForge.EVENT_BUS.addListener(this::onTooltip);
   }
 
   private void onConfigReload(final ModConfig.Reloading event) {
